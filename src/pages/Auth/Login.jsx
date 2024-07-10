@@ -257,7 +257,7 @@ const Login = () => {
               >
                 {loading ? (
                   <>
-                    Welcome to CamSharp ..
+                    Welcome to Gomoku ..
                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 
                   </>
