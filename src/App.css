@@ -1,38 +1,176 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+body {
+  width: 100%;
+  background-color: #476c75 !important;
+  color: #fff !important;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  font-family: Montserrat;
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+  .nav-link {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .nav-link:hover {
+    color: #476c75;
+    border-bottom: 2px solid #476c75;
+  }
+
+  .card {
+    background-color: #4f5458;
+    color: white;
+  }
+
+  .navbar {
+    background-color: #001926 !important;
+  }
+
+  .btn {
+    color: white;
+    background-color: #4f5458;
+    box-shadow: 5px 5px solid black;
+    border: 2px solid black;
+  }
+
+  .btn:hover {
+    color: black;
+    background-color: #ffe164;
+    box-shadow: 5px 5px solid black;
+    border: 2px solid black;
+  }
+
+  .active {
+    box-shadow: 1px 3px 2px black !important;
+    background-color: #a0a2a3;
+    border-radius: 5px !important;
+    color: black;
+  }
+  .iconColor {
+    color: rgb(221, 209, 209) !important;
+  }
+  .sidebar {
+    background-color: #476c75 !important;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Dark mode styles */
+body.dark-theme {
+  width: 100%;
+  background-color: #1e1e1e !important;
+  color: white !important;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+
+  .navbar {
+    background-color: #1e1e1e !important;
+  }
+
+  .nav-link {
+    color: white !important;
+  }
+
+  .nav-link:hover {
+    color: #ffe164 !important;
+    border-bottom: 1px solid#ffe164;
+  }
+
+  .btn {
+    background-color: #23272b !important;
+    color: #ffffff !important;
+    border-color: #343a40 !important;
+  }
+
+  .btn:hover {
+    background-color: #071a30 !important;
+    color: #ffe164 !important;
+    border-color: #ffe164 !important;
+  }
+
+  .card {
+    background-color: #23272b;
+    color: white;
+  }
+  .active {
+    box-shadow: 1px 3px 2px whitesmoke !important;
+    border-radius: 5px !important;
+    background-color: black;
+    color: #ffe164 !important;
+  }
+  .iconColor {
+    color: white !important;
+  }
+  .sidebar {
+    background-color: #1e1e1e !important;
+  }
 }
 
-.App-link {
-  color: #61dafb;
+body::-webkit-scrollbar {
+  display: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media only screen and (min-width: 300px) and (max-width: 768px) {
+  .design {
+    margin-top: 8vh;
+    margin-bottom: 8vh;
   }
-  to {
-    transform: rotate(360deg);
+  .heading {
+    font-size: 2.2rem !important;
   }
+
+  .heading2 {
+    font-size: 1.2rem;
+  }
+
+  .heading3 {
+    font-size: 0.6rem !important;
+  }
+  .mobileViewDashboard {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .headingHeight {
+    font-size: 2.5rem !important;
+  }
+  .headingHeight2 {
+    font-size: 2.5rem !important;
+  }
+  .sidebar {
+    position: fixed;
+    top: 1px;
+    right: -250px;
+    width: 220px;
+    height: 100%;
+    transition: right 0.3s ease;
+    box-shadow: 5px 5px 20px #031a33;
+  }
+
+  .sidebar.show {
+    right: 0;
+  }
+}
+
+.mountains-of-christmas-regular {
+  font-family: "Mountains of Christmas", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+
+.headingHeight {
+  font-size: 6.5rem;
+}
+
+.headingHeight2 {
+  font-size: 4.5rem;
 }
