@@ -51,7 +51,7 @@ export const Footer = ({ onFooterClick }) => {
                 <section className=" SocialLinks ">
                   <Link
                     className="btn btn-sm ms-3 bg-warning"
-                    to="https://www.instagram.com/codesaarthi/"
+                    to="#"
                     role="button"
                     target="_blank"
                   >
@@ -61,7 +61,7 @@ export const Footer = ({ onFooterClick }) => {
                   {/* <!-- Whatsapp --> */}
                   <Link
                     className="btn btn-sm ms-3 bg-success"
-                    to="https://chat.whatsapp.com/BQV3Uv4nlU7IcrnjXHASpE"
+                    to="#"
                     role="button"
                     target="_blank"
                   >
@@ -80,7 +80,7 @@ export const Footer = ({ onFooterClick }) => {
                   <div className="col-6 text-start">
                     <Link
                       className="btn btn-sm ms-3"
-                      to="https://www.instagram.com/codesaarthi/"
+                      to="#"
                       role="button"
                       target="_blank"
                     >
@@ -91,7 +91,7 @@ export const Footer = ({ onFooterClick }) => {
                   <div className="col-6 text-end">
                     <Link
                       className="btn btn-sm ms-3"
-                      to="https://chat.whatsapp.com/BQV3Uv4nlU7IcrnjXHASpE"
+                      to="#"
                       role="button"
                       target="_blank"
                     >
