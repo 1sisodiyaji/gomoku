@@ -4,36 +4,21 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import YourRewards from "../component/YourRewards";
 import PreviousMatch from "../component/PreviousMatch";
+import fetchUserData from "../config/UserData";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        try {
-          const response = await axios.post(
-            `${config.BASE_URL}/api/user`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.data.status === "success") {
-            setUser(response.data.user);
-          } else {
-            console.log("Failed to fetch user information");
-          }
-        } catch (error) {
-          console.error("Error fetching user information:", error);
-        }
-      }
-    };
 
-    fetchUserData();
+  async function fetchData() {
+    const data = await fetchUserData();
+    setUser(data);
+  }
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
 
   const logout = async () => {
     try {
@@ -62,7 +47,7 @@ const Profile = () => {
 
                 <div className="card p-3">
                   <div className="row">
-                    <div className="col-5"><img src={!user.image ? user.image : 'img/dummyPerson.svg'} className="img-fluid rounded-circle mx-auto" alt="user image" title={user.name} loading="lazy" style={{height:'200px'}} /> </div>
+                    <div className="col-5"><img src={!user.image ? user.image : 'img/dummyPerson.svg'} className="img-fluid rounded-circle mx-auto" alt="user" title={user.name} loading="lazy" style={{height:'200px'}} /> </div>
                     <div className="col-7">
 
                       <div className="container-fluid">
@@ -98,7 +83,11 @@ const Profile = () => {
           </div>
         </> :
           <>
-            please login
+          <div className="container-fluid vh-100 design g-0 d-flex justify-content-center align-items-center">
+            <Link to ="/Login" >
+              <h1 className="text-light">please login <i className="fi fi-br-sign-in-alt"></i></h1>
+            </Link>
+          </div>
 
           </>
         }

@@ -9,11 +9,13 @@ const RecoverPassword = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isPasswordVisible2, setIsPasswordVisible2] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
-  const [showEmails, setShowEmails] = useState(true);
-  const [isButtonDisabled, setButtonDisabled] = useState(false);
+  const [showEmails, setShowEmails] = useState(true); 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const otpInputs = useRef(Array.from({ length: 4 }, () => null));
   const from = location.state?.from || '/profile';
   const [formData, setFormData] = useState({
     email: "",
@@ -21,9 +23,7 @@ const RecoverPassword = () => {
     password: "",
     conPassword: "",
   });
-  const navigate = useNavigate();
-  const location = useLocation();
-  const otpInputs = useRef(Array.from({ length: 4 }, () => null));
+
 
   const passwordView = () => {
     setIsPasswordVisible(!isPasswordVisible);

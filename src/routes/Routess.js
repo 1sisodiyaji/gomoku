@@ -14,6 +14,8 @@ import Rules from "../pages/Game/Rules";
 import Reward from "../pages/Game/Rewards";
 import YourRewards from "../component/YourRewards";
 import PreviousMatch from "../component/PreviousMatch";
+import PlayWithFriend from "../pages/Game/PlaywithFriend";
+import  GameGround  from "../pages/Game/GameGround";
 
 const Routess = () => {
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
@@ -40,6 +42,11 @@ const Routess = () => {
         <Route path="/Rewards" element={<Reward />} />
         <Route path="/Your-Rewards" element={<Protected Component={YourRewards} />} />
         <Route path="/History" element={<Protected Component={PreviousMatch} />} />
+
+        <Route path="/play-with-friends" element={<Protected Component={PlayWithFriend} />} />
+        <Route path="/gameground/:gameId" element={<Protected Component={GameGround} />} />
+        
+        <Route path="*" element={() => <h1>Page not found</h1>} />
       </Routes>
       <FootNabar />
       <Footer />

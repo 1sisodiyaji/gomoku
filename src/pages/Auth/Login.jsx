@@ -306,7 +306,7 @@ const Login = () => {
           <img
             src="img/Auth.png"
             className="img-fluid w-100"
-            alt="login page image"
+            alt="login page "
           />
         </div>
       </div>

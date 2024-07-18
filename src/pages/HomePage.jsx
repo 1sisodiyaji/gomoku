@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Helmet } from "react-helmet";
-import Cookies from 'js-cookie';
+import { Helmet } from "react-helmet"; 
+import GetIdFromToken from '../config/GetIdFromToken';
 
-const HomePage = () => {
-    const [user, setUser] = useState(false);
+const HomePage = () => { 
+   const [id, setId] = useState();
    
-    useEffect(()=>{
-        let token = sessionStorage.getItem('token') ||  Cookies.get('token');
-        if(token){
-            setUser(true);
-        }
-    })
+    async function getId() {
+        const id = await GetIdFromToken();
+        setId(id);
+      }
+
+      useEffect(()=>{
+        getId();
+    },[]);
+
     return (
         <>
             <Helmet>
@@ -42,7 +45,7 @@ const HomePage = () => {
                 />
             </Helmet>
 
-            {user ?
+            {id ?
                 <>
 
                     <div className="container-fluid g-0 design" style={{minHeight: '100vh'}}>
@@ -50,10 +53,12 @@ const HomePage = () => {
                         <div className="container d-flex justify-content-center align-items-center" >
                         <div className="row w-100" >
                             <div className="col-lg-6 col-12 my-3">
+                                <Link to = "/play-with-friends">
                                 <div className="card p-3 text-center">
                                    <h1 className='mountains-of-christmas-regular headingHeight2'> Play With  <br />Friend </h1>
                                    <i className="fi fi-sr-users headingHeight iconColor"></i>
                                 </div>
+                                </Link>
                             </div>
                             <div className="col-lg-6 col-12 my-3">
                             <div className="card p-3 text-center">

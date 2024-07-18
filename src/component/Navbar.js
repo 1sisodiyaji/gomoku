@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import config from "../config/config";
-import Cookies from 'js-cookie';
+import Cookies from 'js-cookie'; 
+import fetchUserData from "../config/UserData";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -20,7 +21,7 @@ const Navbar = () => {
       if (response.status === 200) {
         sessionStorage.removeItem("token");
         Cookies.remove('token');
-        window.location.reload();
+        window.location.href = "/";
       } else {
         console.log("Logout failed");
       }
@@ -34,33 +35,16 @@ const Navbar = () => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = sessionStorage.getItem('token'); 
-      if (token) {
-        try {
-          const response = await axios.post(
-            `${config.BASE_URL}/api/user`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          ); 
-          if (response.data.status === "success") {
-            setUser(response.data.user);
-          } else {
-            console.log("Failed to fetch user information");
-          }
-        } catch (error) {
-          console.error("Error fetching user information:", error);
-        }
-      }
-    };
 
-    fetchUserData();
+  async function fetchData() {
+    const data = await fetchUserData();
+    setUser(data);
+  }
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -314,8 +298,8 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/Login">
-                  <button className="btn btn-sm     text-capitalize">
-                    Log in <span role="image">💁</span>
+                  <button className="btn btn-sm     text-capitalize"> 
+                    Log in <span   role="img" aria-label="image of user">💁</span>
                   </button>
                 </Link>
               </>
