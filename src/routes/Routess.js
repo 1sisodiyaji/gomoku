@@ -16,6 +16,8 @@ import YourRewards from "../component/YourRewards";
 import PreviousMatch from "../component/PreviousMatch";
 import PlayWithFriend from "../pages/Game/PlaywithFriend";
 import  GameGround  from "../pages/Game/GameGround";
+import TermsCondition from "../pages/TermsCondition";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 
 const Routess = () => {
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
@@ -46,8 +48,10 @@ const Routess = () => {
         <Route path="/play-with-friends" element={<Protected Component={PlayWithFriend} />} />
         <Route path="/gameground/:gameId" element={<Protected Component={GameGround} />} />
         
+        <Route path="/terms_conditions" element={<TermsCondition />} />
+        <Route path="/privacy_policy" element={<PrivacyPolicy />} />
         <Route path="*" element={() => <h1>Page not found</h1>} />
-      </Routes>
+      </Routes> 
       <FootNabar />
       <Footer />
     </>
