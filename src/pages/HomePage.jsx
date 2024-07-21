@@ -90,7 +90,7 @@ const HomePage = () => {
 
                         <div className="row g-0 my-3 mobileViewDashboard">
                             <div className="col-lg-6 col-12">
-                                <img src="img/hero4.png" alt="dashboard" className='img-fluid w-100' loading='lazy' />
+                                <img src="img/Hero4.png" alt="dashboard" className='img-fluid w-100' loading='lazy' />
                             </div>
                             <div className="col-lg-6 col-12 py-lg-5 ">
                                 <div className="py-lg-5 ps-lg-5 p-2">
@@ -109,14 +109,14 @@ const HomePage = () => {
                                 </div>
                             </div>
                             <div className="col-lg-5 col-12">
-                                <img src="img/hero2.png" alt="dashboard" className='img-fluid w-100' loading='lazy' />
+                                <img src="img/Hero2.png" alt="dashboard" className='img-fluid w-100' loading='lazy' />
                             </div>
                         </div>
 
 
                         <div className="row g-0 my-3 mobileViewDashboard">
                             <div className="col-lg-6 col-12">
-                                <img src="img/hero3.png" alt="dashboard" className='img-fluid w-100' loading='lazy' />
+                                <img src="img/Hero3.png" alt="dashboard" className='img-fluid w-100' loading='lazy' />
                             </div>
                             <div className="col-lg-6 col-12 py-lg-5 ">
                                 <div className="py-lg-5 ps-lg-5 p-2">

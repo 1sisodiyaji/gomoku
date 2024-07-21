@@ -4,7 +4,7 @@ import config from './config';
 
 async function GetIdFromToken (){
 
-        const token = sessionStorage.getItem('token') || Cookies.get('token');
+        const token = sessionStorage.getItem('token') || Cookies.get('token'); 
         if (token) {
           try {
             const response = await axios.post(
@@ -16,7 +16,7 @@ async function GetIdFromToken (){
                 },
               }
             );
-            if (response.data.status === "success") { 
+            if (response.data.status === "success") {  
               return response.data.user._id;
             } else {
               console.log("Failed to fetch user information");

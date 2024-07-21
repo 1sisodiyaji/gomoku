@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import config from '../../config/config';
 import { ToastContainer, toast } from "react-toastify";
@@ -33,7 +33,9 @@ const GameGround = () => {
 
         const data = await response.json();
         setGameDetails(data.gameDetails);
-
+        if (data.gameDetails.playerName2) {
+          clearInterval(intervalId);
+        }
       } catch (error) {
         toast.error(error.message ,{theme: 'dark'});
         console.error('Error fetching game details:', error.message);
@@ -41,7 +43,9 @@ const GameGround = () => {
     };
 
     fetchGameDetails(); 
+    const intervalId = setInterval(fetchGameDetails, 1000);
 
+    return () => clearInterval(intervalId);
   }, [gameId]);
 
 
@@ -73,7 +77,9 @@ const GameGround = () => {
     };
 
     fetchGameDetails();
+    const intervalId = setInterval(fetchGameDetails, 1000);
 
+    return () => clearInterval(intervalId);
   }, [gameId]);
 
 
@@ -143,8 +149,25 @@ const GameGround = () => {
   return (
     <>
       <ToastContainer />
-      <div>
-        <div className='container-fluid g-0 design'>
+      {winner ? 
+      <>
+      <div className="vh-100 d-flex align-items-center justify-content-center">
+       <div className="bg-success  px-4 py-3">
+            <div className="  rounded-lg">
+              <h1 className="fw-bold text-center my-4 ">Winner : {handleWinnerName(winner)}</h1> 
+              <Link to= "/" className='text-light' >
+              <h3> Move to Dashboard <i className="fi fi-br-sign-in-alt pe-2"></i> </h3>
+              </Link>
+            </div>
+      </div>
+      </div>
+       
+
+        </>
+        :
+        <>
+      
+      <div className='container-fluid g-0 design'>
         {gameDetails.map((gameDetail, index) => (
           <div className="d-flex justify-content-between align-items-center">
             <div className='ps-2 text-center'>
@@ -188,16 +211,9 @@ const GameGround = () => {
             <h1 className='fw-medium'>{currentPlayer}</h1>
           </div>
         </div>
-
-        {winner && (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-80 z-50">
-            <div className="bg-white p-8 rounded-lg">
-              <h2 className="text-2xl font-bold text-center mb-4">Winner:</h2>
-              <p className="text-xl font-medium text-center">{handleWinnerName(winner)}</p>
-            </div>
-          </div>
-        )}
-      </div>
+        
+      </>
+      }
     </>
   );
 };
