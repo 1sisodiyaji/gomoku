@@ -8,11 +8,14 @@ import './Board.css';
 
 const GameGround = () => {
   const { gameId } = useParams();
-  const [gameDetails, setGameDetails] = useState(null);
+  const [GameDetails, setGameDetails] = useState();
+  const [checkgameid, setGameId] = useState();
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [newBoard, setNewBoard] = useState(Array(15).fill(null).map(() => Array(15).fill(null)));
   const [winner, setWinner] = useState(null);
-  const [isClickable, setIsClickable] = useState(true);
+  const [isClickable, setIsClickable] = useState(true); 
+
+  const socket = io(`${config.BASE_URL}`); 
 
   useEffect(() => {
     const fetchGameDetails = async () => {
@@ -30,17 +33,20 @@ const GameGround = () => {
 
         const data = await response.json();
         setGameDetails(data.gameDetails);
+
       } catch (error) {
+        toast.error(error.message ,{theme: 'dark'});
         console.error('Error fetching game details:', error.message);
-        toast.error(error.message, { theme: 'dark' });
       }
     };
 
-    fetchGameDetails();
+    fetchGameDetails(); 
+
   }, [gameId]);
 
+
   useEffect(() => {
-    const fetchWinnerDetails = async () => {
+    const fetchGameDetails = async () => {
       try {
         const response = await fetch(`${config.BASE_URL}/game/winner-details?gameId=${gameId}`, {
           method: 'GET',
@@ -54,17 +60,23 @@ const GameGround = () => {
         }
 
         const data = await response.json();
-
+        setGameId(data.gameDetails);
+        console.log(checkgameid);
         if (data.gameDetails.winner === 1 || data.gameDetails.winner === 2) {
           setWinner(data.gameDetails.winner);
         }
+
       } catch (error) {
-        console.error('Error fetching winner details:', error.message);
+        toast.error(error ,{theme: 'dark'});
+        console.error('Error fetching game details:', error.message);
       }
     };
 
-    fetchWinnerDetails();
+    fetchGameDetails();
+
   }, [gameId]);
+
+
 
   useEffect(() => {
     const socket = io(`${config.BASE_URL}`);
@@ -95,60 +107,71 @@ const GameGround = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ gameId, row, col, currentPlayer }),
+        body: JSON.stringify({ gameId: gameId, row, col, currentPlayer }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to store coordinates');
-      }
-    } catch (error) {
-      console.error('Error storing coordinates:', error);
+      const data = await response.json();
+      console.log('coordinate is ok ' + data);
     }
+
+    catch (error) {
+      toast.error(error ,{theme: 'dark'});
+      console.error('Error find coordinate:', error);
+    }
+    socket.emit('move', { row, col, player: currentPlayer });
+
+
   };
 
+
+  const gameDetails = Array.isArray(GameDetails) ? GameDetails : [GameDetails];
+  if (!GameDetails) {
+    return <div>Loading...</div>; // Placeholder for loading state
+  }
+ 
   const handleWinnerName = (winner) => {
     if (winner === 1) {
-      return gameDetails.playerName1;
+      console.log("winner is :",GameDetails.playerName1);
+      return GameDetails.playerName1;
     } else if (winner === 2) {
-      return gameDetails.playerName2;
+      return GameDetails.playerName2;
     }
     return '';
-  };
+  }; 
+ 
 
-  if (!gameDetails) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
       <ToastContainer />
       <div>
         <div className='container-fluid g-0 design'>
+        {gameDetails.map((gameDetail, index) => (
           <div className="d-flex justify-content-between align-items-center">
             <div className='ps-2 text-center'>
-              <h5>You</h5>
-              <span className='fw-medium'>{gameDetails.playerName1} </span>
+              <h5>Player 1</h5>
+              <span className='fw-medium'>{gameDetail.playerName1}</span>
             </div>
             <div>
-              <h3 className='fw-bold '>Game ID :
-                <span style={{fontSize: '1rem'}} className='mx-2'>{gameDetails.gameId}</span>
+              <h3 className='fw-bold '>Game ID:
+                <span style={{fontSize: '1rem'}} className='mx-2'>{gameDetail.gameId}</span>
               </h3>
             </div>
             <div className='pe-2 text-center'>
-              <h5>Opponent</h5>
-              <span className='fw-medium'>{gameDetails.playerName2} </span>
+              <h5>Player 2</h5>
+              <span className='fw-medium'>{gameDetail.playerName2}</span>
             </div>
           </div>
+        ))}
         </div>
 
         <div className='d-flex justify-content-center align-items-center mt-5'>
-          <div className='board'>
+          <div className='border border-secondary'>
             {newBoard.map((row, rowIndex) => (
-              <div key={rowIndex} className='flex'>
+              <div key={rowIndex} className='d-flex'>
                 {row.map((cell, colIndex) => (
                   <div
                     key={`${rowIndex}-${colIndex}`}
-                    className={`cell ${cell === null ? 'pointer' : 'not-allowed'}`}
+                    className={`bg-transparent border border-secondary d-flex align-items-center justify-content-center  ${cell === 1 ? 'bg-black' : (cell === 2 ? 'bg-white' : 'bg-secondary') }` } style={{height: '20px' , width: '20px', cursor: 'pointer'}}
                     onClick={() => handleClick(rowIndex, colIndex)}
                   >
                     {cell}
@@ -161,8 +184,8 @@ const GameGround = () => {
 
         <div className='ms-4'>
           <div className='d-flex gap-4 pt-4 pl-4'>
-            <h2 className='fw-bold'>Current Player :</h2>
-            <h1 className='fw-medium '>{currentPlayer}</h1>
+            <h2 className='fw-bold'>Current Player:</h2>
+            <h1 className='fw-medium'>{currentPlayer}</h1>
           </div>
         </div>
 
