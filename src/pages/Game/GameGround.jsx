@@ -1,219 +1,234 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { io } from 'socket.io-client';
-import config from '../../config/config';
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import config from "../../config/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import './Board.css';
+import "./Board.css";
 
 const GameGround = () => {
   const { gameId } = useParams();
-  const [GameDetails, setGameDetails] = useState();
-  const [checkgameid, setGameId] = useState();
+  const [gameDetails, setGameDetails] = useState();
   const [currentPlayer, setCurrentPlayer] = useState(1);
-  const [newBoard, setNewBoard] = useState(Array(15).fill(null).map(() => Array(15).fill(null)));
+  const [copy , setCopy] = useState(false);
+  const [newBoard, setNewBoard] = useState(
+    Array(15)
+      .fill(null)
+      .map(() => Array(15).fill(null))
+  );
   const [winner, setWinner] = useState(null);
-  const [isClickable, setIsClickable] = useState(true); 
-
-  const socket = io(`${config.BASE_URL}`); 
+  const [isClickable, setIsClickable] = useState(true);
 
   useEffect(() => {
-    const fetchGameDetails = async () => {
+    const fetchGameData = async () => {
       try {
-        const response = await fetch(`${config.BASE_URL}/game/game-details?gameId=${gameId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch game details');
-        }
-
+        const response = await fetch(
+          `${config.BASE_URL}/game/game-details?gameId=${gameId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await response.json();
         setGameDetails(data.gameDetails);
-        if (data.gameDetails.playerName2) {
+        setWinner(data.gameDetails.winner);
+
+        // Stop fetching updates if winner is declared
+        if (data.gameDetails.winner) {
           clearInterval(intervalId);
-        }
+        }
       } catch (error) {
-        toast.error(error.message ,{theme: 'dark'});
-        console.error('Error fetching game details:', error.message);
+        toast.error(error.message, { theme: "dark" });
+        console.error("Error fetching game details:", error.message);
       }
     };
 
-    fetchGameDetails(); 
-    const intervalId = setInterval(fetchGameDetails, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [gameId]);
-
-
-  useEffect(() => {
-    const fetchGameDetails = async () => {
+    const fetchUpdates = async () => {
       try {
-        const response = await fetch(`${config.BASE_URL}/game/winner-details?gameId=${gameId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch game details');
-        }
+        const response = await fetch(
+          `${config.BASE_URL}/game/check-updates?gameId=${gameId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const data = await response.json();
-        setGameId(data.gameDetails);
-        console.log(checkgameid);
-        if (data.gameDetails.winner === 1 || data.gameDetails.winner === 2) {
-          setWinner(data.gameDetails.winner);
-        }
 
+        if (data && data.playersCordinate) {
+          const { player1Input, player2Input, currentPlayer, winner } =
+            data.playersCordinate;
+          const updatedBoard = [...Array(15)].map(() => Array(15).fill(null));
+
+          player1Input.forEach(({ row, col }) => {
+            updatedBoard[row][col] = 1;
+          });
+
+          player2Input.forEach(({ row, col }) => {
+            updatedBoard[row][col] = 2;
+          });
+
+          setNewBoard(updatedBoard);
+          setCurrentPlayer(currentPlayer);
+          setWinner(winner);
+
+          // Stop fetching updates if winner is declared
+          if (winner) {
+            clearInterval(intervalId);
+          }
+        }
       } catch (error) {
-        toast.error(error ,{theme: 'dark'});
-        console.error('Error fetching game details:', error.message);
+        console.error("Error checking updates:", error);
       }
     };
 
-    fetchGameDetails();
-    const intervalId = setInterval(fetchGameDetails, 1000);
+    const intervalId = setInterval(() => {
+      fetchGameData();
+      fetchUpdates();
+    }, 500);
 
     return () => clearInterval(intervalId);
   }, [gameId]);
-
-
-
-  useEffect(() => {
-    const socket = io(`${config.BASE_URL}`);
-    socket.on('move', ({ row, col, player }) => {
-      const updatedBoard = [...newBoard];
-      updatedBoard[row][col] = player;
-      setNewBoard(updatedBoard);
-      setCurrentPlayer(player === 1 ? 2 : 1);
-      setIsClickable(true);
-    });
-
-    return () => {
-      socket.off('move');
-    };
-  }, [newBoard]);
 
   const handleClick = async (row, col) => {
     if (!isClickable || winner || newBoard[row][col] !== null) return;
 
-    setIsClickable(false);
+    setIsClickable(false); // Prevent further clicks until server responds
+
     const updatedBoard = [...newBoard];
     updatedBoard[row][col] = currentPlayer;
     setNewBoard(updatedBoard);
 
     try {
       const response = await fetch(`${config.BASE_URL}/game/store-coordinate`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ gameId: gameId, row, col, currentPlayer }),
       });
       const data = await response.json();
-      console.log('coordinate is ok ' + data);
+      toast.success(data);
+      console.log("coordinate is ok " + data);
+    } catch (error) {
+      toast.error(error, { theme: "dark" });
+      console.error("Error find coordinate:", error);
+    } finally {
+      setIsClickable(true); // Re-enable clicks after server responds
     }
-
-    catch (error) {
-      toast.error(error ,{theme: 'dark'});
-      console.error('Error find coordinate:', error);
-    }
-    socket.emit('move', { row, col, player: currentPlayer });
-
-
   };
 
-
-  const gameDetails = Array.isArray(GameDetails) ? GameDetails : [GameDetails];
-  if (!GameDetails) {
-    return <div>Loading...</div>; // Placeholder for loading state
-  }
- 
   const handleWinnerName = (winner) => {
     if (winner === 1) {
-      console.log("winner is :",GameDetails.playerName1);
-      return GameDetails.playerName1;
+      return gameDetails && gameDetails.playerName1;
     } else if (winner === 2) {
-      return GameDetails.playerName2;
+      return gameDetails && gameDetails.playerName2;
     }
-    return '';
-  }; 
- 
+    return "";
+  };
 
-
+  const handleCopyGameId = () => { 
+    setCopy(true);
+    navigator.clipboard.writeText(gameId);
+    toast.info("Game ID copied to clipboard!", { theme: "dark" }); 
+  };
   return (
     <>
       <ToastContainer />
-      {winner ? 
-      <>
-      <div className="vh-100 d-flex align-items-center justify-content-center">
-       <div className="bg-success  px-4 py-3">
+      {winner ? (
+        <div className="vh-100 d-flex align-items-center justify-content-center">
+          <div className="bg-success  px-4 py-3">
             <div className="  rounded-lg">
-              <h1 className="fw-bold text-center my-4 ">Winner : {handleWinnerName(winner)}</h1> 
-              <Link to= "/" className='text-light' >
-              <h3> Move to Dashboard <i className="fi fi-br-sign-in-alt pe-2"></i> </h3>
+              <h1 className="fw-bold text-center my-4 ">
+                Winner : {handleWinnerName(winner)}
+              </h1>
+              <Link to="/" className="text-light">
+                <h3>
+                  {" "}
+                  Move to Dashboard{" "}
+                  <i className="fi fi-br-sign-in-alt pe-2"></i>{" "}
+                </h3>
               </Link>
             </div>
-      </div>
-      </div>
-       
-
-        </>
-        :
-        <>
-      
-      <div className='container-fluid g-0 design'>
-        {gameDetails.map((gameDetail, index) => (
-          <div className="d-flex justify-content-between align-items-center">
-            <div className='ps-2 text-center'>
-              <h5>Player 1</h5>
-              <span className='fw-medium'>{gameDetail.playerName1}</span>
-            </div>
-            <div>
-              <h3 className='fw-bold '>Game ID:
-                <span style={{fontSize: '1rem'}} className='mx-2'>{gameDetail.gameId}</span>
-              </h3>
-            </div>
-            <div className='pe-2 text-center'>
-              <h5>Player 2</h5>
-              <span className='fw-medium'>{gameDetail.playerName2}</span>
-            </div>
           </div>
-        ))}
         </div>
+      ) : (
+        <>
+          <div className="container-fluid g-0 design">
+            <div className="row">
+              <div className="col-md-4">
+                <div className="p-3 ">
+                  <p>Player 1 :</p>
+                  <h6 className="p-3  bg-dark rounded-4 shadow-lg">
+                    {gameDetails && gameDetails.playerName1}
+                  </h6>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="card mb-3 text-center">
+                  <h5 className="card-header">Game ID : <span onClick={handleCopyGameId} className={`border border-dark py-2 px-4 rounded-6 ${copy ? 'bg-success' : 'bg-transparent'}`} style={{cursor: 'pointer'}}> {gameId} <i className="fi fi-sr-copy-alt"></i> </span> </h5>
+                  <div className="card-body">
+                    <p>
+                      Current Player :{" "}
+                      <span className="py-2 bg-warning px-4 rounded-6">
+                        {currentPlayer && currentPlayer === 1
+                          ? gameDetails && gameDetails.playerName1
+                          : gameDetails && gameDetails.playerName2}{" "}
+                      </span>{" "}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-        <div className='d-flex justify-content-center align-items-center mt-5'>
-          <div className='border border-secondary'>
-            {newBoard.map((row, rowIndex) => (
-              <div key={rowIndex} className='d-flex'>
-                {row.map((cell, colIndex) => (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`bg-transparent border border-secondary d-flex align-items-center justify-content-center  ${cell === 1 ? 'bg-black' : (cell === 2 ? 'bg-white' : 'bg-secondary') }` } style={{height: '20px' , width: '20px', cursor: 'pointer'}}
-                    onClick={() => handleClick(rowIndex, colIndex)}
-                  >
-                    {cell}
+              <div className="col-md-4">
+                <div className="p-3 ">
+                  <p>Player 2 :</p>
+                  <h6 className="p-3  bg-dark rounded-4 shadow-lg">
+                    {gameDetails && gameDetails.playerName2}
+                  </h6>
+                </div>
+              </div>
+            </div>
+
+            <div className="container d-flex justify-content-center">
+              <div className="border p-2 rounded-6">
+                {newBoard.map((row, rowIndex) => (
+                  <div key={rowIndex} className="d-flex">
+                    {row.map((cell, cellIndex) => (
+                      <div key={cellIndex}>
+                        <button
+                          style={{
+                            width: "35px",
+                            height: "30px",
+                            border: "0px",
+                            borderRadius: "5px",
+                            marginLeft: "4px",
+                            marginRight: "4px",
+                          }}
+                          className={`${
+                            cell === 1
+                              ? "bg-primary text-light "
+                              : cell === 2
+                              ? "bg-secondary text-black"
+                              : "bg-light"
+                          }`}
+                          onClick={() => handleClick(rowIndex, cellIndex)}
+                          disabled={winner || cell !== null}
+                        >
+                          {cell === 1 ? "X" : cell === 2 ? "O" : ""}
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-
-        <div className='ms-4'>
-          <div className='d-flex gap-4 pt-4 pl-4'>
-            <h2 className='fw-bold'>Current Player:</h2>
-            <h1 className='fw-medium'>{currentPlayer}</h1>
-          </div>
-        </div>
-        
-      </>
-      }
+        </>
+      )}
     </>
   );
 };
