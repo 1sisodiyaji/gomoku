@@ -4,7 +4,7 @@ import axios from "axios";
 import config from "../config/config";
 
 const PreviousMatch = () => {
-  const [id, setId] = useState();
+  const [id, setId] = useState(null);
   const [gamedata, setGamedata] = useState([]);
 
   async function getId() {
@@ -13,19 +13,25 @@ const PreviousMatch = () => {
   }
 
   async function checkPreviousMatch() { 
+    if (!id) return;
     const response = await axios.post(`${config.BASE_URL}/game/all-matches`, JSON.stringify({ id }), {
     headers: {
       'Content-Type': 'application/json'
     }
-  });
-    console.log((await response).data.game);
-    setGamedata((await response).data.game);
+  }); 
+    setGamedata( response.data.game);
   }
 
   useEffect(() => {
     getId();
-    checkPreviousMatch();
-  },[id]);
+  }, []);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const intervalId = setInterval(checkPreviousMatch, 2000); 
+    return () => clearInterval(intervalId);
+  }, [id]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -47,7 +53,7 @@ const PreviousMatch = () => {
 
   return (
     <>
-      <div className="container-fluid g-0 design">
+      <div className="container-fluid g-0 design" style={{minHeight: '100vh'}}>
         <div className="card  p-3 my-4 m-1">
           <h3>
             {" "}
