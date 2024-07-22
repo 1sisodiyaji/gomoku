@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import config from "../../config/config";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "./Board.css";
+import "react-toastify/dist/ReactToastify.css"; 
+import playSound from "../../component/SoundManager";
 
 const GameGround = () => {
   const { gameId } = useParams();
@@ -16,7 +16,7 @@ const GameGround = () => {
       .map(() => Array(15).fill(null))
   );
   const [winner, setWinner] = useState(null);
-  const [isClickable, setIsClickable] = useState(true);
+  const [isClickable, setIsClickable] = useState(true); 
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -33,10 +33,12 @@ const GameGround = () => {
         const data = await response.json();
         setGameDetails(data.gameDetails);
         setWinner(data.gameDetails.winner);
-
+ 
+       
         // Stop fetching updates if winner is declared
         if (data.gameDetails.winner) {
           clearInterval(intervalId);
+          playSound('celebration'); // Play celebration sound when game ends
         }
       } catch (error) {
         toast.error(error.message, { theme: "dark" });
@@ -78,6 +80,7 @@ const GameGround = () => {
           // Stop fetching updates if winner is declared
           if (winner) {
             clearInterval(intervalId);
+            playSound('celebration');
           }
         }
       } catch (error) {
@@ -103,6 +106,7 @@ const GameGround = () => {
     setNewBoard(updatedBoard);
 
     try {
+      playSound('click'); // Play click sound when a cell is clicked
       const response = await fetch(`${config.BASE_URL}/game/store-coordinate`, {
         method: "POST",
         headers: {
@@ -158,8 +162,8 @@ const GameGround = () => {
       ) : (
         <>
           <div className="container-fluid g-0 design">
-            <div className="row">
-              <div className="col-md-4">
+            <div className="row g-0">
+              <div className="col-md-4 d-md-block d-none">
                 <div className="p-3 ">
                   <p>Player 1 :</p>
                   <h6 className="p-3  bg-dark rounded-4 shadow-lg">
@@ -167,8 +171,8 @@ const GameGround = () => {
                   </h6>
                 </div>
               </div>
-              <div className="col-md-4">
-                <div className="card mb-3 text-center">
+              <div className="col-md-4 col-12">
+                <div className="card mb-3 text-center m-1">
                   <h5 className="card-header">Game ID : <span onClick={handleCopyGameId} className={`border border-dark py-2 px-4 rounded-6 ${copy ? 'bg-success' : 'bg-transparent'}`} style={{cursor: 'pointer'}}> {gameId} <i className="fi fi-sr-copy-alt"></i> </span> </h5>
                   <div className="card-body">
                     <p>
@@ -183,7 +187,7 @@ const GameGround = () => {
                 </div>
               </div>
 
-              <div className="col-md-4">
+              <div className="col-md-4 d-md-block d-none">
                 <div className="p-3 ">
                   <p>Player 2 :</p>
                   <h6 className="p-3  bg-dark rounded-4 shadow-lg">
@@ -193,22 +197,14 @@ const GameGround = () => {
               </div>
             </div>
 
-            <div className="container d-flex justify-content-center">
-              <div className="border p-2 rounded-6">
+            <div className="container d-flex justify-content-center p-2">
+              <div className="border p-2 rounded-6 ">
                 {newBoard.map((row, rowIndex) => (
                   <div key={rowIndex} className="d-flex">
                     {row.map((cell, cellIndex) => (
                       <div key={cellIndex}>
                         <button
-                          style={{
-                            width: "35px",
-                            height: "30px",
-                            border: "0px",
-                            borderRadius: "5px",
-                            marginLeft: "4px",
-                            marginRight: "4px",
-                          }}
-                          className={`${
+                          className={`boardCell ${
                             cell === 1
                               ? "bg-primary text-light "
                               : cell === 2
