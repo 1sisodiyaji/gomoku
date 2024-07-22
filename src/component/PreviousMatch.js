@@ -57,16 +57,16 @@ const PreviousMatch = () => {
             {gamedata.map((game) => (
               <div
                 key={game._id}
-                className={`${game.status === 'win' ? 'bg-success ' : 'bg-danger '}p-3 my-2 rounded-4 shadow-lg`}
+                className={`${(game.status === 'Win') && (game.winner.name === game.AuthorID.name) ? 'bg-success ' : 'bg-danger '}p-3 my-2 rounded-4 shadow-lg`}
               >
                 <div className="d-flex justify-content-around">
-                  <p className="border px-4 py-2 rounded-8 shadow-lg"> {game.playerName1} </p>
+                  <p className={`border px-4 py-2 rounded-8 shadow-lg ${game.winner.name === game.playerName1 ? 'bg-success' : ''} `}> {game.playerName1} </p>
                   <h3> Vs </h3>
-                  <p className="border px-4 py-2 rounded-8 shadow-lg"> {game.playerName2} </p>
+                  <p className={`border px-4 py-2 rounded-8 shadow-lg ${game.winner.name === game.playerName2 ? 'bg-success' : ''} `}> {game.playerName2} </p>
                 </div>
                 <div className="d-flex justify-content-around">
                   <small> Created By: <span className="text-decoration-underline">   {game.AuthorID.name}  </span> </small>
-                  <h3> {game.winner ? <p> Winner: {game.winner.name}</p> : `Loser ☠️`} </h3>
+                  <h6> {game.winner ? <p> Winner: {game.winner.name}</p> : `No Winner ☠️`} </h6>
                   <small> {formatDate(game.createdOn)} </small>
                 </div>
               </div>

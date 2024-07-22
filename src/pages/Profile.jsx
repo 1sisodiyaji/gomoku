@@ -24,8 +24,7 @@ const Profile = () => {
     try {
       const response = await axios.post(`${config.BASE_URL}/api/logout`);
 
-      if (response.status === 200) {
-        sessionStorage.removeItem("token");
+      if (response.status === 200) { 
         Cookies.remove('token');
         window.location.href = "/";
       } else {

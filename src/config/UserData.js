@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import axios from "axios";
 
 const fetchUserData = async () => {
-    const token = sessionStorage.getItem('token') || Cookies.get('token');
+    const token = Cookies.get('token');
     if (token) {
       try {
         const response = await axios.post(

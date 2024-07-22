@@ -151,7 +151,7 @@ const RecoverPassword = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = sessionStorage.getItem('token') ||  Cookies.get('token');
+      const token = Cookies.get('token');
 
       if (token) {
         navigate(from);  

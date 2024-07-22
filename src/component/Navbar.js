@@ -18,8 +18,7 @@ const Navbar = () => {
     try {
       const response = await axios.post(`${config.BASE_URL}/api/logout`);
 
-      if (response.status === 200) {
-        sessionStorage.removeItem("token");
+      if (response.status === 200) { 
         Cookies.remove('token');
         window.location.href = "/";
       } else {
@@ -50,21 +49,26 @@ const Navbar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const toggleDarkMode = () => {
-    const isDarkMode = !darkmode;
-    setDarkmode(isDarkMode);
-
-    // Toggle dark theme class on body
-    const body = document.body;
-    if (isDarkMode) {
-      body.classList.add("dark-theme");
-    } else {
-      body.classList.remove("dark-theme");
+  useEffect(() => {
+    // Check local storage for dark mode preference on initial load
+    const storedDarkMode = localStorage.getItem('darkmode');
+    if (storedDarkMode) {
+        const isDarkMode = JSON.parse(storedDarkMode);
+        setDarkmode(isDarkMode);
+        document.body.classList.toggle('dark-theme', isDarkMode);
     }
+}, []);
 
-    // Optionally, persist dark mode state in localStorage
-    localStorage.setItem("darkmode", JSON.stringify(isDarkMode));
-  };
+
+const toggleDarkMode = () => {
+  const isDarkMode = !darkmode;
+  setDarkmode(isDarkMode);
+
+  // Toggle dark theme class on body
+  const body = document.body;
+  localStorage.setItem('darkmode', JSON.stringify(isDarkMode));
+  body.classList.toggle('dark-theme', isDarkMode);
+};
 
   return (
     <>

@@ -4,7 +4,7 @@ import config from './config';
 
 async function GetIdFromToken (){
 
-        const token = sessionStorage.getItem('token') || Cookies.get('token'); 
+        const token =  Cookies.get('token'); 
         if (token) {
           try {
             const response = await axios.post(

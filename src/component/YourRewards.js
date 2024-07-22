@@ -21,7 +21,7 @@ const Rewards = () => {
       }
     });
     setGamedata(response.data.game);
-    setWinCount(response.data.game.filter((game) => game.status === 'win').length);
+    setWinCount(response.data.game.filter((game) => (game.status === 'Win') && (game.winner.name === game.AuthorID.name)).length);
   }
 
   useEffect(() => {
@@ -35,13 +35,13 @@ const Rewards = () => {
   if (winCount === 1) {
     badge = 'Achiever Badge';
     badgeIcon = <i className="fi fi-ss-leadership"></i>;
-  } else if (winCount === 3) {
+  } else if (winCount <= 3) {
     badge = 'Trailblazer Ribbon ';
     badgeIcon = <i className="fi fi-sr-badge"></i>;
-  } else if (winCount === 5) {
+  } else if (winCount <= 5) {
     badge = "Champion's Laurel";
     badgeIcon = <i className="fi fi-sr-ranking-star"></i>;
-  } else if (winCount === 10) {
+  } else if (winCount <= 10) {
     badge = 'Legendary Crown';
     badgeIcon = <i className="fi fi-sr-award"></i>;
   } else if (winCount >= 11) {

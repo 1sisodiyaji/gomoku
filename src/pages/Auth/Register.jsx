@@ -74,8 +74,7 @@ const Register = () => {
 
       if (response.data.status === "success") {
         toast.success("Account created successfully!", { theme: "dark" });
-        Cookies.set('token', response.data.token, { expires: 7, secure: true }); 
-        sessionStorage.setItem('token', response.data.token);
+        Cookies.set('token', response.data.token, { expires: 7, secure: true });  
         setLoading(false);
         window.location.href= "/";
       } else {
@@ -120,8 +119,7 @@ const Register = () => {
             `${config.BASE_URL}/api/saveuserData`,formDataEncoded);
             
         if (saveUserDataResponse.data.status === "success") {
-          Cookies.set('token', saveUserDataResponse.data.token, { expires: 7, secure: true }); 
-          sessionStorage.setItem('token', saveUserDataResponse.data.token);
+          Cookies.set('token', saveUserDataResponse.data.token, { expires: 7, secure: true });  
           setLoading(false);
           window.location.href= "/";
         } else {
@@ -144,7 +142,7 @@ const Register = () => {
   
     useEffect(() => {
     const fetchUserData = async () => {
-      const token = sessionStorage.getItem('token') ||  Cookies.get('token');
+      const token = Cookies.get('token');
 
       if (token) {
         navigate(from);  

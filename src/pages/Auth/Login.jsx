@@ -58,8 +58,7 @@ const Login = () => {
           console.log(response); 
           if (response.data.status === "success") {
             toast.success("Login Successfully!", { theme: "dark" });
-            Cookies.set('token', response.data.token, { expires: 7, secure: true }); 
-            sessionStorage.setItem('token', response.data.token);
+            Cookies.set('token', response.data.token, { expires: 7, secure: true });  
             setLoading(false);
             window.location.href= "/";
           } else {
@@ -102,7 +101,6 @@ const Login = () => {
             
         if (saveUserDataResponse.data.status === "success") {
           Cookies.set('token', saveUserDataResponse.data.token, { expires: 7, secure: true }); 
-          sessionStorage.setItem('token', saveUserDataResponse.data.token);
           setLoading(false);
           window.location.href= "/";
         } else {
