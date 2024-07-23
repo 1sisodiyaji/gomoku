@@ -60,7 +60,7 @@ const Rewards = () => {
   }
 
   return (
-    <div className="card p-3 design" style={{minHeight: '100vh'}}>
+    <div className="card p-3 design">
       <h2>Rewards <i className="fi fi-sr-trophy-star ps-2"></i></h2>
       <p>You have earned {winCount} wins!</p>
       <p>Your badge is : <span className="border py-2 px-4 rounded-6 bg-success shadow-lg">{badge} {badgeIcon}</span></p>

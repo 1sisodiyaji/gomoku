@@ -10,6 +10,7 @@ const GameGround = () => {
   const [gameDetails, setGameDetails] = useState();
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [copy , setCopy] = useState(false);
+  const [played , setPlayed] = useState(false);
   const [newBoard, setNewBoard] = useState(
     Array(15)
       .fill(null)
@@ -96,6 +97,13 @@ const GameGround = () => {
     return () => clearInterval(intervalId);
   }, [gameId]);
 
+  useEffect(() =>{
+   if(!played){
+  playSound('alert'); 
+  setPlayed(true);
+}
+  },[]);
+  
   const handleClick = async (row, col) => {
     if (!isClickable || winner || newBoard[row][col] !== null) return;
 
