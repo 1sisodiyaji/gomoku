@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import config from "../../config/config";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 import playSound from "../../component/SoundManager";
 
 const GameGround = () => {
   const { gameId } = useParams();
+  const navigate = useNavigate();
   const [gameDetails, setGameDetails] = useState();
   const [currentPlayer, setCurrentPlayer] = useState(1);
-  const [copy , setCopy] = useState(false);
-  const [played , setPlayed] = useState(false);
+  const [copy, setCopy] = useState(false);
+  const [played, setPlayed] = useState(false);
   const [newBoard, setNewBoard] = useState(
     Array(15)
       .fill(null)
       .map(() => Array(15).fill(null))
   );
   const [winner, setWinner] = useState(null);
-  const [isClickable, setIsClickable] = useState(true); 
+  const [isClickable, setIsClickable] = useState(true);
+  const audioRef = useRef(null); // Ref to manage audio element
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -34,12 +36,9 @@ const GameGround = () => {
         const data = await response.json();
         setGameDetails(data.gameDetails);
         setWinner(data.gameDetails.winner);
- 
-       
-        // Stop fetching updates if winner is declared
+
         if (data.gameDetails.winner) {
-          clearInterval(intervalId);
-          playSound('celebration'); // Play celebration sound when game ends
+          playSoundBasedOnResult(data.gameDetails.winner);
         }
       } catch (error) {
         toast.error(error.message, { theme: "dark" });
@@ -62,8 +61,7 @@ const GameGround = () => {
         const data = await response.json();
 
         if (data && data.playersCordinate) {
-          const { player1Input, player2Input, currentPlayer, winner } =
-            data.playersCordinate;
+          const { player1Input, player2Input, currentPlayer, winner } = data.playersCordinate;
           const updatedBoard = [...Array(15)].map(() => Array(15).fill(null));
 
           player1Input.forEach(({ row, col }) => {
@@ -78,10 +76,8 @@ const GameGround = () => {
           setCurrentPlayer(currentPlayer);
           setWinner(winner);
 
-          // Stop fetching updates if winner is declared
           if (winner) {
-            clearInterval(intervalId);
-            playSound('celebration');
+            playSoundBasedOnResult(winner);
           }
         }
       } catch (error) {
@@ -92,18 +88,36 @@ const GameGround = () => {
     const intervalId = setInterval(() => {
       fetchGameData();
       fetchUpdates();
-    }, 100);
+    }, 200);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+      stopAllSounds(); // Stop sound on component unmount
+    };
   }, [gameId]);
 
-  useEffect(() =>{
-   if(!played){
-  playSound('alert'); 
-  setPlayed(true);
-}
-  },[]);
-  
+  useEffect(() => {
+    if (!played) {
+      playSound('alert');
+      setPlayed(true);
+    }
+  }, []);
+
+  const playSoundBasedOnResult = (winner) => {
+    if (winner === 1) {
+      playSound('celebration'); // Play win sound
+    } else if (winner === 2) {
+      playSound('lose'); // Play lose sound
+    }
+  };
+
+  const stopAllSounds = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
   const handleClick = async (row, col) => {
     if (!isClickable || winner || newBoard[row][col] !== null) return;
 
@@ -122,9 +136,7 @@ const GameGround = () => {
         },
         body: JSON.stringify({ gameId: gameId, row, col, currentPlayer }),
       });
-      const data = await response.json();
-      toast.success(data);
-      console.log("coordinate is ok " + data);
+      const data = await response.json(); 
     } catch (error) {
       toast.error(error, { theme: "dark" });
       console.error("Error find coordinate:", error);
@@ -147,21 +159,28 @@ const GameGround = () => {
     navigator.clipboard.writeText(gameId);
     toast.info("Game ID copied to clipboard!", { theme: "dark" }); 
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      stopAllSounds();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
   return (
     <>
       <ToastContainer />
       {winner ? (
         <div className="vh-100 d-flex align-items-center justify-content-center">
-          <div className="bg-success  px-4 py-3">
-            <div className="  rounded-lg">
+          <div className="bg-success px-4 py-3">
+            <div className="rounded-lg">
               <h1 className="fw-bold text-center my-4 ">
                 Winner : {handleWinnerName(winner)}
               </h1>
               <Link to="/dashboard" className="text-light">
                 <h3>
-                  {" "}
-                  Move to Dashboard{" "}
-                  <i className="fi fi-br-sign-in-alt pe-2"></i>{" "}
+                  Move to Dashboard <i className="fi fi-br-sign-in-alt pe-2"></i>
                 </h3>
               </Link>
             </div>
@@ -174,21 +193,30 @@ const GameGround = () => {
               <div className="col-md-4 d-md-block d-none">
                 <div className="p-3 ">
                   <p>Player 1 :</p>
-                  <h6 className="p-3  bg-dark rounded-4 shadow-lg">
+                  <h6 className="p-3 bg-dark rounded-4 shadow-lg">
                     {gameDetails && gameDetails.playerName1}
                   </h6>
                 </div>
               </div>
               <div className="col-md-4 col-12">
                 <div className="card mb-3 text-center m-1">
-                  <h5 className="card-header">Game ID : <span onClick={handleCopyGameId} className={`border border-dark py-2 px-4 rounded-6 ${copy ? 'bg-success' : 'bg-transparent'}`} style={{cursor: 'pointer'}}> {gameId} <i className="fi fi-sr-copy-alt"></i> </span> </h5>
+                  <h5 className="card-header">
+                    Game ID :{" "}
+                    <span
+                      onClick={handleCopyGameId}
+                      className={`border border-dark py-2 px-4 rounded-6 ${copy ? 'bg-success' : 'bg-transparent'}`}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {gameId} <i className="fi fi-sr-copy-alt"></i>
+                    </span>
+                  </h5>
                   <div className="card-body">
                     <p>
                       Current Player :{" "}
                       <span className="py-2 bg-warning px-4 rounded-6">
                         {currentPlayer && currentPlayer === 1
                           ? gameDetails && gameDetails.playerName1
-                          : gameDetails && gameDetails.playerName2}{" "}
+                          : gameDetails && gameDetails.playerName2}
                       </span>{" "}
                     </p>
                   </div>
@@ -198,7 +226,7 @@ const GameGround = () => {
               <div className="col-md-4 d-md-block d-none">
                 <div className="p-3 ">
                   <p>Player 2 :</p>
-                  <h6 className="p-3  bg-dark rounded-4 shadow-lg">
+                  <h6 className="p-3 bg-dark rounded-4 shadow-lg">
                     {gameDetails && gameDetails.playerName2}
                   </h6>
                 </div>

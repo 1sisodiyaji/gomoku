@@ -21,7 +21,7 @@ const Rewards = () => {
       }
     });
     setGamedata(response.data.game);
-    setWinCount(response.data.game.filter((game) => (game.status === 'Win') && (game.winner.name === game.AuthorID.name)).length);
+    setWinCount(response.data.game.filter((game) => (game.status === 'Win') && (game.winner &&  game.winner.name === game.AuthorID.name)).length);
   }
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const Rewards = () => {
     <div className="card p-3 design">
       <h2>Rewards <i className="fi fi-sr-trophy-star ps-2"></i></h2>
       <p>You have earned {winCount} wins!</p>
-      <p>Your badge is : <span className="border py-2 px-4 rounded-6 bg-success shadow-lg ms-2">{badge} {badgeIcon}</span></p>
+      <p>Your badge is : <span className="border py-2 px-4 rounded-6 bg-success shadow-lg ms-2 heading3">{badge} {badgeIcon}</span></p>
     </div>
   );
 };

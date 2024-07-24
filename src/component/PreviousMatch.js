@@ -9,7 +9,7 @@ const PreviousMatch = () => {
   const [gamedata, setGamedata] = useState([]);
   const [username , setUsername] = useState(null);
   const [message, setMessage] = useState("");
-
+ 
   async function getId() {
     const id = await GetIdFromToken();
     setId(id);
@@ -77,7 +77,7 @@ const PreviousMatch = () => {
             {gamedata && gamedata.map((game) => (
               <div
                 key={game._id}
-                className={`${(game.status === 'Win') && (game.winner.name === username) ? 'bg-success ' : 'bg-danger '}p-3 my-2 rounded-4 shadow-lg`}
+                className={`${(game.status === 'Win') && (game.winner && game.winner.name === username) ? 'bg-success ' : 'bg-danger '}p-3 my-2 rounded-4 shadow-lg`}
               >
                 <div className="d-flex justify-content-around">
                   <p className={`border px-4 py-2 rounded-8 shadow-lg ${game.winner && game.winner.name === game.playerName1 ? 'bg-success' : ''} `}> {game.playerName1} </p>

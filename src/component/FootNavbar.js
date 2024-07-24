@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import config from "../config/config";
-import axios from "axios";
+import { Link, useLocation } from "react-router-dom"; 
+import fetchUserData from "../config/UserData";
+
+
 export const FootNabar = () => {
   const location = useLocation();
   const [user, setUser] = useState(null);
@@ -10,32 +11,13 @@ export const FootNabar = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = sessionStorage.getItem("token");
-      if (token) {
-        try {
-          const response = await axios.post(
-            `${config.BASE_URL}/api/user`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          if (response.data.status === "success") {
-            setUser(response.data.user);
-          } else {
-            console.log("Failed to fetch user information");
-          }
-        } catch (error) {
-          console.error("Error fetching user information:", error);
-        }
-      }
-    };
+  async function fetchData() {
+    const data = await fetchUserData();
+    setUser(data);
+  }
 
-    fetchUserData();
+  useEffect(() => {
+    fetchData();
   }, []);
 
   return (
@@ -59,12 +41,13 @@ export const FootNabar = () => {
               <i className="fi fi-rr-house-window iconColor"></i>{" "}
             </Link>
           )}
+
           <Link
             className="text-center"
             style={{ fontSize: "1.4rem" }}
-            to="/Rules"
+            to="/History"
           >
-            <i className="fi fi-rr-users-alt iconColor"></i>
+             <i className="fi fi-br-time-past pe-2 iconColor"></i>
           </Link>
 
           <Link
