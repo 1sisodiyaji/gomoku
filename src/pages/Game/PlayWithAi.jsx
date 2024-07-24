@@ -58,8 +58,7 @@ const PlayWithAi = () => {
           }
         );
 
-        const data = await response.json();
-        console.log(data);
+        const data = await response.json(); 
         if (data && data.playersCordinate) {
           const { player1Input, player2Input, currentPlayer, winner } =
             data.playersCordinate;
