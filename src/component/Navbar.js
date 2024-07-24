@@ -75,7 +75,25 @@ const toggleDarkMode = () => {
       {/* <!-- Navbar For small screen--> */}
       <nav className="navbar navbar-expand-lg  fixed-top d-lg-none d-md-none d-sm-block  shadow-0">
         <div className="container-fluid">
+          {user
+          ? 
+          <>
           <Link
+            className="navbar-brand text-center text-decoration-none"
+            to="/dashboard"
+          >
+            <img
+              src="../img/logo.png"
+              height="25"
+              title="codesaarthi"
+              alt="Codesaarthi  Logo"
+              loading="lazy"
+            />
+          </Link>
+          </>
+        :
+        <>
+        <Link
             className="navbar-brand text-center text-decoration-none"
             to="/"
           >
@@ -87,6 +105,9 @@ const toggleDarkMode = () => {
               loading="lazy"
             />
           </Link>
+        </>
+        }
+          
           <div>
             <button
               className="btn btn-sm rounded-8  me-2"
@@ -224,8 +245,11 @@ const toggleDarkMode = () => {
           }}
         >
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            {/* Navbar brand */}
-            <Link className="navbar-brand text-center ms-4" to="/">
+
+            {user 
+            ?
+          <>
+           <Link className="navbar-brand text-center ms-4" to="/dashboard">
               <img
                 src="img/logo.png"
                 className="img-fluid"
@@ -236,6 +260,23 @@ const toggleDarkMode = () => {
                 Gomoku
               </h1>
             </Link>
+          </>
+          :
+          <>
+           <Link className="navbar-brand text-center ms-4" to="/">
+              <img
+                src="img/logo.png"
+                className="img-fluid"
+                style={{ height: "35px" }}
+                alt=""
+              />
+              <h1 style={{ fontSize: "24px" }} className="mb-0 ms-2 text-light mountains-of-christmas-regular">
+                Gomoku
+              </h1>
+            </Link>
+          </>}
+           
+
             {/* Left links */}
             <ul className="navbar-nav mx-auto mb-2 mb-lg-0 d-flex justify-content-center align-items-center p-1">
               <li className="nav-items pe-2">

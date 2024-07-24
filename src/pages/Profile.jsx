@@ -37,11 +37,11 @@ const Profile = () => {
 
   return (
     <>
-      <div className="container-fluid design g-0" style={{ minHeight: '100vh' }}>
+      <div className="container-fluid design g-0 " style={{ minHeight: '100vh' }}>
 
         {user ? <>
           <div className="container">
-            <div className="row py-lg-5">
+            <div className="row py-md-5">
               <div className="col-lg-6 col-12">
 
                 <div className="card p-3">

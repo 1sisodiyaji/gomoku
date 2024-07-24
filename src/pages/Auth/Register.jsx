@@ -76,7 +76,7 @@ const Register = () => {
         toast.success("Account created successfully!", { theme: "dark" });
         Cookies.set('token', response.data.token, { expires: 7, secure: true });  
         setLoading(false);
-        window.location.href= "/";
+        window.location.href= "/dashboard";
       } else {
         toast.error(response.data.message, { theme: "dark" });
         setLoading(false);
@@ -121,7 +121,7 @@ const Register = () => {
         if (saveUserDataResponse.data.status === "success") {
           Cookies.set('token', saveUserDataResponse.data.token, { expires: 7, secure: true });  
           setLoading(false);
-          window.location.href= "/";
+          window.location.href= "/dashboard";
         } else {
           toast.error("Error saving user data", { theme: "dark" });
           console.log(saveUserDataResponse.data.message);

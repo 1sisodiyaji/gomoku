@@ -18,6 +18,8 @@ import PlayWithFriend from "../pages/Game/PlaywithFriend";
 import  GameGround  from "../pages/Game/GameGround";
 import TermsCondition from "../pages/TermsCondition";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
+import Dashboard from "../pages/Game/Dashboard";
+import PlayWithAi from "../pages/Game/PlayWithAi";
 
 const Routess = () => {
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
@@ -38,7 +40,8 @@ const Routess = () => {
         <Route path="/Register" element={<Register />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/RecoverPassword" element={<RecoverPassword />} />
-
+        
+        <Route path="/dashboard" element={<Protected Component={Dashboard} />} />
         <Route path="/profile" element={<Protected Component={Profile} />} />
         <Route path="/Rules" element={<Rules />} />
         <Route path="/Rewards" element={<Reward />} />
@@ -46,6 +49,7 @@ const Routess = () => {
         <Route path="/History" element={<Protected Component={PreviousMatch} />} />
 
         <Route path="/play-with-friends" element={<Protected Component={PlayWithFriend} />} />
+        <Route path="/play-with-GomokuAi/:gameId" element={<Protected Component={PlayWithAi} />} />
         <Route path="/gameground/:gameId" element={<Protected Component={GameGround} />} />
         
         <Route path="/terms_conditions" element={<TermsCondition />} />

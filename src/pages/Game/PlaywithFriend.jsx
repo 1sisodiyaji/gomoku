@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import GetIdFromToken from "../../config/GetIdFromToken";
+import GetNameFromToken from "../../config/GetNameFromToken";
 import config from "../../config/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,29 +10,25 @@ import "react-toastify/dist/ReactToastify.css";
 function PlayWithFriend() {
   const navigate = useNavigate();
   const [playerName, setPlayerName] = useState(""); 
-  const [gameId, setGameId] = useState("");
-  const [playerName2, setPlayerName2] = useState("");
+  const [gameId, setGameId] = useState(""); 
   const [id, setId] = useState();
   const [loading, setLoading] = useState(false);
-  const [loading2, setLoading2] = useState(false);
+  const [loading2, setLoading2] = useState(false); 
+
   async function getId() {
     const id = await GetIdFromToken();
     setId(id);
   }
+  async function getName() {
+    const name = await GetNameFromToken();
+    setPlayerName(name);
+  }
 
   useEffect(() => {
     getId();
+    getName();
   }, []);
 
-  const onChangePlayerName1 = (e) => {
-    e.preventDefault();
-    setPlayerName(e.target.value);
-  };
-
-  const onChangePlayerName2 = (e) => {
-    e.preventDefault();
-    setPlayerName2(e.target.value);
-  };
 
   const onChangeGameId = (e) => {
     e.preventDefault();
@@ -74,7 +71,7 @@ function PlayWithFriend() {
         toast.warn("Please enter game ID!", { theme: "dark" });
         return;
     }
-    if(!playerName2){
+    if(!playerName){
         toast.warn("Please enter your name!", { theme: "dark" });
         return;
     }
@@ -85,7 +82,7 @@ function PlayWithFriend() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ gameId: gameId, playerName2: playerName2 , id : id}),
+        body: JSON.stringify({ gameId: gameId, playerName2: playerName , id : id}),
       });
       if(response.status === 200){
         const data = await response.json();
@@ -125,22 +122,7 @@ function PlayWithFriend() {
                 className="img-fluid "
                 style={{ height: "210px" }}
               />
-            </div>
-            <div className="d-flex">
-              <label htmlFor="PlayerName" className=" fw-bold">
-                PlayerName:
-              </label>
-              <input
-                type="text"
-                name="PlayerName"
-                required 
-                placeholder="Please Enter your name to start game 🎮..."
-                className="p-2 form-control w-100 ms-2"
-                value={playerName}
-                onChange={onChangePlayerName1}
-              />
-            </div>
-           
+            </div> 
               {loading ? (
                 <>
                 <button
@@ -187,28 +169,13 @@ function PlayWithFriend() {
               value={gameId}
               onChange={onChangeGameId}
             />
-          </div>
-          <div className="d-flex my-3">
-            <label htmlFor="playerName2" className="fw-bold">
-              PlayerName:
-            </label>
-            <input
-              type="text"
-              name="playerName2"
-              required
-              placeholder="Please enetr your name .."
-              className="form-control w-100"
-              value={playerName2}
-              onChange={onChangePlayerName2}
-            />
-          </div>
-
+          </div> 
          
           {loading2 ? 
           <>
            <button
             type="submit"
-            className="btn text-capitalize disabled"
+            className="btn text-capitalize disabled my-2"
           >
             Joining the Game ...
             <span
@@ -222,7 +189,7 @@ function PlayWithFriend() {
           <>
            <button
             type="submit"
-            className="btn text-capitalize"
+            className="btn text-capitalize my-2"
             onClick={sendGameIdByPlayer2}
           >
             Join Game

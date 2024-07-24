@@ -43,16 +43,16 @@ const Rewards = () => {
   if (winCount === 1) {
     badge = 'Achiever Badge';
     badgeIcon = <i className="fi fi-ss-leadership"></i>;
-  } else if (winCount <= 3) {
+  } else if ( winCount > 0 && winCount <= 3) {
     badge = 'Trailblazer Ribbon ';
     badgeIcon = <i className="fi fi-sr-badge"></i>;
-  } else if (winCount <= 5) {
+  } else if ( winCount > 0 && winCount <= 5) {
     badge = "Champion's Laurel";
     badgeIcon = <i className="fi fi-sr-ranking-star"></i>;
-  } else if (winCount <= 10) {
+  } else if ( winCount > 0 && winCount <= 10) {
     badge = 'Legendary Crown';
     badgeIcon = <i className="fi fi-sr-award"></i>;
-  } else if (winCount >= 11) {
+  } else if ( winCount > 0 && winCount >= 11) {
     badge = 'Ultimate Badge of Honor';
     badgeIcon = <i className="fi fi-sr-dragon"></i>;
   } else {
@@ -63,7 +63,7 @@ const Rewards = () => {
     <div className="card p-3 design">
       <h2>Rewards <i className="fi fi-sr-trophy-star ps-2"></i></h2>
       <p>You have earned {winCount} wins!</p>
-      <p>Your badge is : <span className="border py-2 px-4 rounded-6 bg-success shadow-lg">{badge} {badgeIcon}</span></p>
+      <p>Your badge is : <span className="border py-2 px-4 rounded-6 bg-success shadow-lg ms-2">{badge} {badgeIcon}</span></p>
     </div>
   );
 };
