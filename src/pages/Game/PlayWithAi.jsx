@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import config from "../../config/config";
 import { ToastContainer, toast } from "react-toastify";
@@ -18,6 +18,8 @@ const PlayWithAi = () => {
   );
   const [winner, setWinner] = useState(null);
   const [isClickable, setIsClickable] = useState(true);
+  const [lastClicked, setLastClicked] = useState(null); // Track last clicked cell
+  const [lastAiMove, setLastAiMove] = useState(null); // Track AI's last move
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -104,13 +106,14 @@ const PlayWithAi = () => {
 
   const handleClick = async (row, col) => {
     if (!isClickable || winner || newBoard[row][col] !== null || currentPlayer === 2) return;
-  
+
+    setLastClicked({ row, col }); // Set last clicked cell
     setIsClickable(false);
-  
+
     const updatedBoard = [...newBoard];
     updatedBoard[row][col] = currentPlayer;
     setNewBoard(updatedBoard);
-  
+
     try {
       playSound('click');
       const response = await fetch(`${config.BASE_URL}/game/store-coordinate`, {
@@ -121,10 +124,10 @@ const PlayWithAi = () => {
         body: JSON.stringify({ gameId: gameId, row, col, currentPlayer }),
       });
       const data = await response.json(); 
-  
+
       if (!winner) {
         const boardForAI = updatedBoard.map(row => row.map(cell => (cell === null ? 0 : cell)));
-  
+
         const aiResponse = await fetch(`${config.BASE_URL}/game/ai`, {
           method: "POST",
           headers: {
@@ -133,13 +136,14 @@ const PlayWithAi = () => {
           body: JSON.stringify({ board: boardForAI, player: 1, opponent: 2 }),
         });
         const aiData = await aiResponse.json();
-  
+
         const { row: aiRow, col: aiCol } = aiData;
         if (aiRow !== undefined && aiCol !== undefined) {
           const newBoardWithAI = [...updatedBoard];
           newBoardWithAI[aiRow][aiCol] = 2; // Mark AI's move
           setNewBoard(newBoardWithAI);
-  
+          setLastAiMove({ row: aiRow, col: aiCol }); // Set last AI move
+
           const updateResponse = await fetch(`${config.BASE_URL}/game/store-coordinate`, {
             method: "POST",
             headers: {
@@ -158,7 +162,6 @@ const PlayWithAi = () => {
       setIsClickable(true); // Re-enable clicks after server responds
     }
   };
-  
 
   const handleWinnerName = (winner) => {
     if (winner === 1) {
@@ -174,7 +177,6 @@ const PlayWithAi = () => {
     navigator.clipboard.writeText(gameId);
     toast.info("Game ID copied to clipboard!", { theme: "dark" }); 
   };
-
 
   return (
     <>
@@ -215,9 +217,9 @@ const PlayWithAi = () => {
                     <p>
                       Current Player :{" "}
                       <span className="py-2 bg-warning px-4 rounded-6">
-                        {currentPlayer && currentPlayer === 1
+                        {currentPlayer === 1
                           ? gameDetails && gameDetails.playerName1
-                          : "AI"}{" "}
+                          : "AI"}
                       </span>{" "}
                     </p>
                   </div>
@@ -243,11 +245,11 @@ const PlayWithAi = () => {
                         <button
                           className={`boardCell ${
                             cell === 1
-                              ? "bg-primary text-light "
+                              ? "bg-primary text-light"
                               : cell === 2
-                              ? "bg-secondary text-black"
+                              ? `bg-secondary text-black ${lastAiMove && lastAiMove.row === rowIndex && lastAiMove.col === cellIndex ? 'border border-3 border-warning' : ''}`
                               : "bg-light"
-                          }`}
+                          } ${lastClicked && lastClicked.row === rowIndex && lastClicked.col === cellIndex ? 'border border-3 border-warning' : ''}`}
                           onClick={() => handleClick(rowIndex, cellIndex)}
                           disabled={winner || cell !== null || currentPlayer === 2}
                         >
