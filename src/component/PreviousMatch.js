@@ -41,10 +41,8 @@ const PreviousMatch = () => {
 
   useEffect(() => {
     if (!id) return;
-
-    const intervalId = setInterval(checkPreviousMatch, 500); 
-    return () => clearInterval(intervalId);
-  }, [id]);
+    checkPreviousMatch(); 
+  }, []);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
