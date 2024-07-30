@@ -3,19 +3,18 @@ import { Link, useParams } from "react-router-dom";
 import config from "../../config/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
-import playSound from "../../component/SoundManager"; 
+import { playSound, stopAllSounds } from "../../component/SoundManager"; 
 
 const PlayWithAi = () => {
-  const { gameId } = useParams();
+  const { gameId } = useParams(); 
   const [gameDetails, setGameDetails] = useState();
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [copy, setCopy] = useState(false); 
   const [played, setPlayed] = useState(false);
-  const [newBoard, setNewBoard] = useState(
+  const [newBoard, setNewBoard] = useState( 
     Array(15)
-      .fill(null)
-      .map(() => Array(15).fill(null))
-  );
+     .fill(null) 
+     .map(() => Array(15).fill(null)));
   const [winner, setWinner] = useState(null);
   const [isClickable, setIsClickable] = useState(true);
   const [lastClicked, setLastClicked] = useState(null); // Track last clicked cell
@@ -35,12 +34,10 @@ const PlayWithAi = () => {
         );
         const data = await response.json();
         setGameDetails(data.gameDetails);
-        setWinner(data.gameDetails.winner);
-
-        // Stop fetching updates if winner is declared
+        setWinner(data.gameDetails.winner);  
         if (data.gameDetails.winner) {
           clearInterval(intervalId);
-          playSound('celebration'); // Play celebration sound when game ends
+          playSound(data.gameDetails.winner === '66a0fd50afaf59d211da0be4' ? 'lose' : 'celebration');
         }
       } catch (error) {
         toast.error(error.message, { theme: "dark" });
@@ -77,12 +74,6 @@ const PlayWithAi = () => {
           setNewBoard(updatedBoard);
           setCurrentPlayer(currentPlayer);
           setWinner(winner);
-
-          // Stop fetching updates if winner is declared
-          if (winner) {
-            clearInterval(intervalId);
-            playSound('celebration');
-          }
         }
       } catch (error) {
         console.error("Error checking updates:", error);
@@ -92,9 +83,12 @@ const PlayWithAi = () => {
     const intervalId = setInterval(() => {
       fetchGameData();
       fetchUpdates();
-    }, 100);
+    }, 200);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+      stopAllSounds();
+    };
   }, [gameId]);
 
   useEffect(() => {
@@ -114,7 +108,7 @@ const PlayWithAi = () => {
     updatedBoard[row][col] = currentPlayer;
     setNewBoard(updatedBoard);
 
-    try {
+    try { 
       playSound('click');
       const response = await fetch(`${config.BASE_URL}/game/store-coordinate`, {
         method: "POST",

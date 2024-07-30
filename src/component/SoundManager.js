@@ -1,16 +1,19 @@
- import { Howl } from 'howler';
+// SoundManager.js
+import { Howl } from 'howler';
 
-const sounds = { 
-  alert : new Howl({src :['/sounds/notification.wav']}),
-  click: new Howl({ src: ['/sounds/click.wav'] }),
+const sounds = {
   celebration: new Howl({ src: ['/sounds/celebration.mp3'] }),
-  lose : new Howl({ src: ['/sounds/lose. mp3']}),
+  click: new Howl({ src: ['/sounds/click.wav'] }),
+  alert: new Howl({ src: ['/sounds/notification.wav'] }),
+  lose: new Howl({ src: ['/sounds/lose.mp3'] })
 };
 
-const playSound = (type) => {
-  if (sounds[type]) {
-    sounds[type].play();
+export const playSound = (sound) => {
+  if (sounds[sound]) {
+    sounds[sound].play();
   }
 };
 
-export default playSound;
+export const stopAllSounds = () => {
+  Object.values(sounds).forEach((sound) => sound.stop());
+};

@@ -28,6 +28,7 @@ const PreviousMatch = () => {
       'Content-Type': 'application/json'
     }
   });  
+   
   if(response.data.game.length === 0){
     setMessage("You have not Played any match , Please try once !");
   }
@@ -80,7 +81,7 @@ const PreviousMatch = () => {
                 <div className="d-flex justify-content-around">
                   <p className={`border px-4 py-2 rounded-8 shadow-lg ${game.winner && game.winner.name === game.playerName1 ? 'bg-success' : ''} `}> {game.playerName1} </p>
                   <h3> Vs </h3>
-                  <p className={`border px-4 py-2 rounded-8 shadow-lg ${game.winner && game.winner.name === game.playerName2 ? 'bg-success' : ''} `}> {game.playerName2} </p>
+                  <p className={`border px-4 py-2 rounded-8 shadow-lg ${game.winner && game.winner.name === game.playerName2 ? 'bg-success' : ''} `}> {game.playerName2 || 'No player'} </p>
                 </div>
                 <div className="d-flex justify-content-around">
                   <small> Created By: <span className="text-decoration-underline">   {game.AuthorID.name}  </span> </small>

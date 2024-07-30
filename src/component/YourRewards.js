@@ -32,8 +32,7 @@ const Rewards = () => {
   useEffect(() => {
     if (!id) return;
 
-    const intervalId = setInterval(checkPreviousMatch, 2000); 
-    return () => clearInterval(intervalId);
+    checkPreviousMatch();
   }, [id]);
 
 

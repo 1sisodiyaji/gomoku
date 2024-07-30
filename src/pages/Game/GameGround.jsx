@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import config from "../../config/config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import playSound from "../../component/SoundManager";
+import { playSound, stopAllSounds } from "../../component/SoundManager";
 
 const GameGround = () => {
   const { gameId } = useParams();
-  const navigate = useNavigate();
   const [gameDetails, setGameDetails] = useState();
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [copy, setCopy] = useState(false);
-  const [played, setPlayed] = useState(false);
   const [newBoard, setNewBoard] = useState(
     Array(15)
       .fill(null)
@@ -19,7 +17,7 @@ const GameGround = () => {
   );
   const [winner, setWinner] = useState(null);
   const [isClickable, setIsClickable] = useState(true);
-  const audioRef = useRef(null); // Ref to manage audio element
+  const [played, setPlayed] = useState(false); // For initial alert sound effect
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -37,6 +35,7 @@ const GameGround = () => {
         setGameDetails(data.gameDetails);
         setWinner(data.gameDetails.winner);
 
+        // Play sound based on winner from fetched data
         if (data.gameDetails.winner) {
           playSoundBasedOnResult(data.gameDetails.winner);
         }
@@ -62,7 +61,7 @@ const GameGround = () => {
 
         if (data && data.playersCordinate) {
           const { player1Input, player2Input, currentPlayer, winner } = data.playersCordinate;
-          const updatedBoard = [...Array(15)].map(() => Array(15).fill(null));
+          const updatedBoard = Array(15).fill().map(() => Array(15).fill(null));
 
           player1Input.forEach(({ row, col }) => {
             updatedBoard[row][col] = 1;
@@ -76,6 +75,7 @@ const GameGround = () => {
           setCurrentPlayer(currentPlayer);
           setWinner(winner);
 
+          // Play sound based on winner from updates
           if (winner) {
             playSoundBasedOnResult(winner);
           }
@@ -98,30 +98,30 @@ const GameGround = () => {
 
   useEffect(() => {
     if (!played) {
-      playSound('alert');
+      playSound('alert'); // Initial sound effect when component mounts
       setPlayed(true);
     }
-  }, []);
+  }, [played]);
+
+  useEffect(() => {
+    // Stop previous sounds and play the new one only once based on the winner
+    if (winner) {
+      playSoundBasedOnResult(winner);
+    }
+  }, [winner]);
 
   const playSoundBasedOnResult = (winner) => {
     if (winner === 1) {
-      playSound('celebration'); // Play win sound
+      playSound('celebration'); // Play celebration sound
     } else if (winner === 2) {
       playSound('lose'); // Play lose sound
-    }
-  };
-
-  const stopAllSounds = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
     }
   };
 
   const handleClick = async (row, col) => {
     if (!isClickable || winner || newBoard[row][col] !== null) return;
 
-    setIsClickable(false); // Prevent further clicks until server responds
+    setIsClickable(false);
 
     const updatedBoard = [...newBoard];
     updatedBoard[row][col] = currentPlayer;
@@ -138,8 +138,8 @@ const GameGround = () => {
       });
       const data = await response.json(); 
     } catch (error) {
-      toast.error(error, { theme: "dark" });
-      console.error("Error find coordinate:", error);
+      toast.error(error.message, { theme: "dark" });
+      console.error("Error finding coordinate:", error);
     } finally {
       setIsClickable(true); // Re-enable clicks after server responds
     }
@@ -162,7 +162,7 @@ const GameGround = () => {
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      stopAllSounds();
+      stopAllSounds(); // Stop sounds when the page is unloaded
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
@@ -214,7 +214,7 @@ const GameGround = () => {
                     <p>
                       Current Player :{" "}
                       <span className="py-2 bg-warning px-4 rounded-6">
-                        {currentPlayer && currentPlayer === 1
+                        {currentPlayer === 1
                           ? gameDetails && gameDetails.playerName1
                           : gameDetails && gameDetails.playerName2}
                       </span>{" "}
