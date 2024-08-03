@@ -28,7 +28,7 @@ const PreviousMatch = () => {
       'Content-Type': 'application/json'
     }
   });  
-   
+   console.log(response)
   if(response.data.game.length === 0){
     setMessage("You have not Played any match , Please try once !");
   }

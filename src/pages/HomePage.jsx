@@ -80,6 +80,12 @@ const HomePage = () => {
                 designed to challenge and improve your skills. Can you outsmart
                 the computer and claim victory?
               </h6>
+              <Link to="/Register">
+                {" "}
+                <div className="btn text-capitalize rounded-8">
+                Take a challenge
+                </div>{" "}
+              </Link>
             </div>
           </div>
         </div>
@@ -96,6 +102,12 @@ const HomePage = () => {
                 moves, and outthink your opponents in this engaging and
                 strategic boardgame experience.
               </h6>
+              <Link to="/Register">
+                {" "}
+                <div className="btn text-capitalize rounded-8">
+                  Show your strategy
+                </div>{" "}
+              </Link>
             </div>
           </div>
           <div className="col-lg-5 col-12">
@@ -130,6 +142,12 @@ const HomePage = () => {
                 that comes from playing a game that rewards skill and intellect.
                 Join our community of happy players and share the joy of Gomoku!
               </h6>
+              <Link to="/Register">
+                {" "}
+                <div className="btn text-capitalize rounded-8">
+                 Get Your thrill
+                </div>{" "}
+              </Link>
             </div>
           </div>
         </div>

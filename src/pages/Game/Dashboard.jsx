@@ -93,25 +93,21 @@ const Dashboard = () => {
           <div className="row w-100">
             <div className="col-lg-6 col-12 my-3">
               <Link to="/play-with-friends">
-                <div className="card p-3 text-center">
-                  <h1 className="mountains-of-christmas-regular headingHeight2">
-                    {" "}
-                    Play With <br />
-                    Friend{" "}
-                  </h1>
-                  <i className="fi fi-sr-users headingHeight iconColor"></i>
+                <div className="card p-3  d-flex justify-content-center align-items-center">
+                  <h1 className="mountains-of-christmas-regular headingHeight2">   Play With  Friend  </h1> 
+                    <img src="img/CardFriend.png" className="img-fluid" style={{height:'150px' , width: '150px'}} alt="" /> 
+                 
                 </div>
               </Link>
             </div>
             <div className="col-lg-6 col-12 my-3">
               <Link to = "/play-with-GomokuAi">
-              <div className="card p-3 text-center"  onClick={generateCodeId}>
+              <div className="card p-3 d-flex justify-content-center align-items-center"  onClick={generateCodeId}>
                 <h1 className="mountains-of-christmas-regular headingHeight2 ">
-                  {" "}
-                  Play With <br />
-                  AI{" "}
+ 
+                  Play With   AI 
                 </h1>
-                <i className="fi fi-sr-user-robot headingHeight iconColor"></i>
+                <img src="img/cardAi.png" className="img-fluid" style={{height:'150px' , width: '150px'}} alt="" /> 
               </div>
               </Link>
             </div>

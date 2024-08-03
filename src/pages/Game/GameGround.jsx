@@ -173,11 +173,15 @@ const GameGround = () => {
       <ToastContainer />
       {winner ? (
         <div className="vh-100 d-flex align-items-center justify-content-center">
-          <div className="bg-success px-4 py-3">
+          <div className="card p-5">
             <div className="rounded-lg">
               <h1 className="fw-bold text-center my-4 ">
                 Winner : {handleWinnerName(winner)}
+                
               </h1>
+              <div className="text-center my-3">
+              <img src="https://res.cloudinary.com/dbqq41bpc/image/upload/v1722667204/blog-app/trophy_sm5qv9.png" className="bg-image hover-zoom" alt="trophy" />
+              </div> 
               <Link to="/dashboard" className="text-light">
                 <h3>
                   Move to Dashboard <i className="fi fi-br-sign-in-alt pe-2"></i>
